@@ -1,0 +1,39 @@
+!alias !savealias !leetappend /home/segfault/files/useraliases 10 !alias %s
+!alias !reload !raw quit :reload
+!alias !addlink !leetappend /var/www/hacking.allowed.org/links.txt 10 %s (~%u)
+!alias !reset !kill 9 -1
+!alias !drop !say %u: Dropping shell right now, type exit when done.
+!alias !dig !c dig %s
+!alias !more !tailunlock /home/segfault/files/cmd_out
+!alias !ping !say pong
+!alias !ec !eval /home/segfault/scripts/evalcommand %s
+!alias !lambda !ec echo -ne 'SegFault: alias !tmp %s\n!tmp\n'
+!alias !reset !ec printf "!kill 9 -1\n!c pwd\n"
+!alias !reset !ec printf "!kill 9 -1\n";sleep 1;printf "!c pwd\n"
+!alias !reset !ec printf '!kill 9 -1\n!c pwd\n'
+!alias !pymath !c python -c 'import math;print(%s)'
+!alias !reset !kill 9 -1
+!alias !up !c uptime
+!alias !randip !c perl -le '$,=".";print map int rand 256,1..4;' %s
+!alias !jarg !c cat /var/www/hacking.allowed.org/docs/jarg447.txt | XuntilY "^:%s" "^:." | tail -r | tail -n+2 | tail -r
+!alias !jargcheck !c cat /var/www/hacking.allowed.org/docs/jarg447.txt | XuntilY "^:%s" "^:." | tail -r | tail -n+2 | tail -r | wc -l
+!alias !links !c grep "%s" /var/www/hacking.allowed.org/links.txt
+!alias !lambda !ec echo -ne '%m: alias !tmp %s\n!tmp\n'
+!alias !nlinks !links -c" "%s
+!alias 
+!alias 
+!alias 
+!alias !topic !rc echo "TOPIC %f :%s (set by %u at $(date -u "+%%b %%m %%R") UTC)"
+!alias !pty !c python -c 'import pty;pty.spawn("/usr/pkg/bin/bash")'
+!alias !you !rc if [ "%s" = "there" ] || [ "%s" = "there?" ]; then printf "PRIVMSG %f :\x01ACTION is totally here\x01\n"; else echo "PRIVMSG %f :no, you %s"; fi
+!alias !you !rc if [ "%s" = "there" ] || [ "%s" = "there?" ]; then printf "PRIVMSG %f :\x01ACTION is totally here\x01\n"; else echo "PRIVMSG %f :no, you %s" | tr '?' '!'; fi
+!alias !escape_sequences !c grep "//here" /root/services/segfault/segfault.c
+!alias !irc !eval /home/segfault/scripts/ircrawcommand %s
+!alias !ic !eval /home/segfault/scripts/irccommand %s
+!alias !addtodo !leetappend /var/www/hacking.allowed.org/todo.txt 10 "%s"
+!alias !reeval !eval /home/segfault/files/useraliases
+!alias !todo !c shuffle -f /var/www/hacking.allowed.org/todo.txt | head -n1
+!alias !todo !c cat -n /var/www/hacking.allowed.org/todo.txt | shuffle -f-| head -n1
+!alias !diddo !c sed '%sd' /var/www/hacking.allowed.org/todo.txt > /var/www/hacking.allowed.org/todo.txt_;cat /var/www/hacking.allowed.org/todo.txt_ > /var/www/hacking.allowed.org/todo.txt
+!alias !todos !c cat -n /var/www/hacking.allowed.org/todo.txt
+!alias !ntodo !c wc -l /var/www/hacking.allowed.org/todo.txt

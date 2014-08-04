@@ -1,0 +1,7 @@
+!leetappend /home/segfault/files/cmd_in 10 export 'IRC_U=%u'
+!leetappend /home/segfault/files/cmd_in 10 export 'IRC_F=%f'
+!leetappend /home/segfault/files/cmd_in 10 export 'IRC_S=%s'
+!leetappend /home/segfault/files/cmd_in 10 export 'IRC_M=%m'
+!leetuntail * /home/segfault/files/cmd_out
+!leettail 56/home/segfault/files/cmd_out
+!leetappend /home/segfault/files/cmd_in 10 %s
