@@ -1,2 +1,2 @@
-!changetail /home/segfault/files/cmd_out %f
-!tailunlock /home/segfault/files/cmd_out
+!changetail %~/files/cmd_out %f
+!tailunlock %~/files/cmd_out

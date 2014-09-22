@@ -1,0 +1,3 @@
+ !leetuntail * %~/files/cmd_out
+ !leettail 56%~/files/cmd_out
+ !leetappend %~/files/cmd_in 10 %s

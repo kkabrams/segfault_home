@@ -1,10 +1,15 @@
-!alias !rc !eval /home/segfault/scripts/rawcommand %s
+!raw oper g0d WAFFLEIRON
+!raw join #cmd
+!alias !rc !eval %~/scripts/rawcommand %s
 !alias !eval !leettail 22%s
-!alias !c !eval /home/segfault/scripts/command %s
+!alias !c !eval %~/scripts/command %s
+!leettail 56%~/files/cmd_out
+!changetail %~/files/cmd_out #default
 !raw join #default
 !raw join #syslog
 !alias !tail !leettail 08%s
 !tail /var/log/syslog/messages
 !changetail /var/log/syslog/messages #syslog
-!eval /home/segfault/files/useraliases
-
+!eval %~/files/useraliases
+!tail %~/files/default
+!changetail %~/files/default #default

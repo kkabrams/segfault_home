@@ -1,16 +1,12 @@
-!alias !savealias !leetappend /home/segfault/files/useraliases 10 !alias %s
+!alias !savealias !leetappend %~/files/useraliases 10 !alias %s
 !alias !reload !raw quit :reload
 !alias !addlink !leetappend /var/www/hacking.allowed.org/links.txt 10 %s (~%u)
-!alias !reset !kill 9 -1
 !alias !drop !say %u: Dropping shell right now, type exit when done.
 !alias !dig !c dig %s
-!alias !more !tailunlock /home/segfault/files/cmd_out
+!alias !more !tailunlock %~/files/cmd_out
 !alias !ping !say pong
-!alias !ec !eval /home/segfault/scripts/evalcommand %s
+!alias !ec !eval %~/scripts/evalcommand %s
 !alias !lambda !ec echo -ne 'SegFault: alias !tmp %s\n!tmp\n'
-!alias !reset !ec printf "!kill 9 -1\n!c pwd\n"
-!alias !reset !ec printf "!kill 9 -1\n";sleep 1;printf "!c pwd\n"
-!alias !reset !ec printf '!kill 9 -1\n!c pwd\n'
 !alias !pymath !c python -c 'import math;print(%s)'
 !alias !reset !kill 9 -1
 !alias !up !c uptime
@@ -20,20 +16,55 @@
 !alias !links !c grep "%s" /var/www/hacking.allowed.org/links.txt
 !alias !lambda !ec echo -ne '%m: alias !tmp %s\n!tmp\n'
 !alias !nlinks !links -c" "%s
-!alias 
-!alias 
-!alias 
 !alias !topic !rc echo "TOPIC %f :%s (set by %u at $(date -u "+%%b %%m %%R") UTC)"
 !alias !pty !c python -c 'import pty;pty.spawn("/usr/pkg/bin/bash")'
-!alias !you !rc if [ "%s" = "there" ] || [ "%s" = "there?" ]; then printf "PRIVMSG %f :\x01ACTION is totally here\x01\n"; else echo "PRIVMSG %f :no, you %s"; fi
 !alias !you !rc if [ "%s" = "there" ] || [ "%s" = "there?" ]; then printf "PRIVMSG %f :\x01ACTION is totally here\x01\n"; else echo "PRIVMSG %f :no, you %s" | tr '?' '!'; fi
 !alias !escape_sequences !c grep "//here" /root/services/segfault/segfault.c
-!alias !irc !eval /home/segfault/scripts/ircrawcommand %s
-!alias !ic !eval /home/segfault/scripts/irccommand %s
+!alias !irc !eval %~/scripts/ircrawcommand %s
+!alias !ic !eval %~/scripts/irccommand %s
+!alias !reeval !eval %~/files/useraliases
 !alias !addtodo !leetappend /var/www/hacking.allowed.org/todo.txt 10 "%s"
-!alias !reeval !eval /home/segfault/files/useraliases
-!alias !todo !c shuffle -f /var/www/hacking.allowed.org/todo.txt | head -n1
 !alias !todo !c cat -n /var/www/hacking.allowed.org/todo.txt | shuffle -f-| head -n1
 !alias !diddo !c sed '%sd' /var/www/hacking.allowed.org/todo.txt > /var/www/hacking.allowed.org/todo.txt_;cat /var/www/hacking.allowed.org/todo.txt_ > /var/www/hacking.allowed.org/todo.txt
 !alias !todos !c cat -n /var/www/hacking.allowed.org/todo.txt
 !alias !ntodo !c wc -l /var/www/hacking.allowed.org/todo.txt
+!alias !greptodo !c grep "%s" /var/www/hacking.allowed.org/todo.txt
+!alias !myaddtodo !leetappend /var/www/hacking.allowed.org/todo/%u.txt 10 "%s"
+!alias !mytodo !c cat -n /var/www/hacking.allowed.org/todo/%u.txt | shuffle -f-| head -n1 2>/dev/null || echo "You've got nothing todo today, but smile."
+!alias !mydiddo !c sed '%sd' /var/www/hacking.allowed.org/todo/%u.txt > /var/www/hacking.allowed.org/todo/%u.txt_;cat /var/www/hacking.allowed.org/todo/%u.txt_ > /var/www/hacking.allowed.org/todo/%u.txt
+!alias !mytodos !c cat -n /var/www/hacking.allowed.org/todo/%u.txt 2>/dev/null || echo "You've got nothing to do today, but smile."
+!alias !myntodo !c wc -l /var/www/hacking.allowed.org/todo/%u.txt 2>/dev/null || echo "You've got nothing todo today, but smile."
+!alias !mygreptodo !c grep "%s" /var/www/hacking.allowed.org/todo/%u.txt 2>/dev/null || echo "You've got nothing todo today, but smile."
+!alias !mytodoadd !myaddtodo %s
+!alias !tell !c false
+!alias !ask !c false
+!alias !messages !c false
+!alias !help !say unknown command: !help. try !help
+!alias !mytododel !mydiddo %s
+!alias !mytodogrep !mygreptodo %s
+!alias !mygreptodo !c cat -n /var/www/hacking.allowed.org/todo/%u.txt 2>/dev/null | grep -i "%s" || echo "You've got nothing todo today, but smile."
+!alias !tmplink !c echo '<a href="%s">%s</a>' > /var/www/hacking.allowed.org/tmplink.html
+!alias !title !c wget -qO- %s | tr '>' '\n' | XuntilY "<title" "</title"| sed 's/<.*$//'
+!alias !tmplink !c echo '<meta http-equiv="refresh" content="0;url=%s">' > /var/www/hacking.allowed.org/tmplink.html
+!alias !links !c if [ "%s" ];then grep "%s" /var/www/hacking.allowed.org/links.txt;else echo http://hacking.allowed.org/links.txt;fi
+!alias !seen !c false
+!alias !mytodocount !myntodo
+!alias !rmuseralias !c rmln %s %~/files/useraliases
+!alias !useraliases !c cat -n %~/files/useraliases %s
+!alias !duplicateuseraliases !c cut '-d ' -f2 %~/files/useraliases | uniq -d
+!alias !grepuseraliases !useraliases | grep %s
+!alias !mytodo !c nr="%s"; test -z "$nr" && nr=1; cat -n /var/www/hacking.allowed.org/todo/%u.txt | shuffle -f-| head -n $nr 2>/dev/null || echo "You've got nothing todo today, but smile."
+!alias !tits !say [  . | .  ]
+!alias !geo !c whob %s | egrep "^Country:|^City"
+!alias !dcc !rc echo -e "privmsg %u :\x01DCC SEND $(basename %s) `dcchelper %h` 12345 `wc -c "%s" | sed 's/ //g'`\x01";ncat -l -p 12345 < "%s"
+!alias !diddo rmln %s /var/www/hacking.allowed.org/todo.txt
+!alias !title !c wget --no-check-certificate -qO "%s" | tr '>' '\n' | XuntilY "<title" "</title"| sed 's/<.*$//'
+!alias !title !c wget --no-check-certificate -qO- "%s" | tr '>' '\n' | XuntilY "<title" "</title"| sed 's/<.*$//'
+!alias !suicide !kill -9 %p
+!alias !suicide !kill 9 %p
+!alias !pingout !kill 17 %p
+!alias !built-ins !c grep strncmp /root/services/segfault/segfault.c | grep '"' | grep msg | tail -n+1 | cut '-d"' -f2 | tr '\n' ' ' | tr -s ' '
+!alias !help !say !builtins !aliases
+!alias !help !say  !builtins !aliases
+!alias !cinit !leettail 56%~/files/cmd_out
+!alias !cat !leettail 28%s
