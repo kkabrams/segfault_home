@@ -9,12 +9,15 @@
 !leettail 56#cmd:%~/files/cmd_out
 !leettail 56#cmd:%~/files/sh_out
 !raw join #default
+
 !alias !tail !leettail 08%%s
 
-!alias !taildir !ec find %%s -type f | while read i;do c='#'$(basename $(dirname "$i"))'-'$(basename "$i");echo '!leettail 08'${c}':'"$i";echo '!raw JOIN '$c;echo '!raw TOPIC '$c' :'$c;done
+#top one joins too.
+ !alias !taildir !ec find %%s -type f | while read i;do c='#'$(basename  $(dirname "$i"))'-'$(basename "$i");echo '!leettail 08'${c}':'"$i";echo '!raw JOIN '$c;echo '!raw TOPIC '$c' :'$c;done
+ !alias !taildir !ec find %%s -type f | while read i;do c='#'$(basename  $(dirname "$i"))'-'$(basename "$i");echo '!leettail 08'${c}':'"$i";echo '!raw TOPIC '$c' :'$c;done
+#!alias !taildir !c find %%s -type f | while read i;do c='#'$(basename  $(dirname "$i"))'-'$(basename "$i");echo '!leettail 08'${c}':'"$i";echo '!raw TOPIC '$c' :'$c;done > /service/log2irc/scripts/taildir;echo '!lobotomy' >> /service/log2irc/scripts/taildir
+!alias !taildir !c find %%s -type f | while read i;do c='#'$(basename  $(dirname "$i"))'-'$(basename "$i");echo '!leettail 08'${c}':'"$i";echo '!raw TOPIC '$c' :'$c;done > /service/log2irc/scripts/taildir
 !taildir /var/log/toirc/
-
 !tail #default:%~/files/default
-!raw join #twit
-!leettail 24#twit:%~/files/twit_out
+
 !eval %~/files/useraliases
