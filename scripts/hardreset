@@ -1,0 +1,4 @@
+!untail /home/segfault/files/cmd_out
+!c cat /home/segfault/files/cmd_out > /dev/null
+!leettail 56/home/segfault/files/cmd_out
+!reset

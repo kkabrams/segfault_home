@@ -1,0 +1,3 @@
+ !unsavealias %s
+!leetappend /home/segfault/files/useraliases 10 !alias %s
+!say alias saved.

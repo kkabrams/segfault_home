@@ -1,0 +1,3 @@
+!more
+!changetail %~/files/sh_out %f 56
+!leetappend %~/files/sh_in 10 %s
