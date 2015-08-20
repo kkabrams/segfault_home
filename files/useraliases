@@ -1,70 +1,65 @@
-!alias !savealias !leetappend %~/files/useraliases 10 !alias %%s
+!alias !savealias !leetappend %~/files/useraliases 10 !alias %s
 !alias !reload !raw quit :reload
-!alias !addlink !leetappend /var/www/sites/hacking/links.txt 10 %%s (~%%n)
-!alias !drop !say %%n: Dropping shell right now, type exit when done.
-!alias !dig !c dig %%s
+!alias !addlink !leetappend /var/www/sites/hacking/links.txt 10 %s (~%n)
 !alias !more !tailunlock %~/files/cmd_out
+!alias !shmore !tailunlock %~/files/sh_out
 !alias !ping !say pong
-!alias !ec !eval %~/scripts/evalcommand %%s
-!alias !lambda !ec echo -ne 'SegFault: alias !tmp %%s\n!tmp\n'
-!alias !pymath !c python -c 'import math;print(%%s)'
+!alias !ec !eval %~/scripts/evalcommand %s
+!alias !lambda !ec echo -ne 'SegFault: alias !tmp %q\n!tmp\n'
+!alias !pymath !c python -c 'import math;print(%q)'
 !alias !reset !kill 9 -1
 !alias !up !c uptime
-!alias !randip !c perl -le '$,=".";print map int rand 256,1..4;' %%s
-!alias !jarg !c cat /service/gitd/jargon/jarg.txt | XuntilY "^:%%s" "^:." | tail -r | tail -n+2 | tail -r
-!alias !jargcheck !c cat /service/gitd/jargon/jarg.txt | XuntilY "^:%%s" "^:." | tail -r | tail -n+2 | tail -r | wc -l
-!alias !lambda !ec echo -ne '%%m: alias !tmp %%s\n!tmp\n'
-!alias !topic !rc echo "TOPIC %%f :%%s (set by %%n at $(date -u "+%%%%b %%%%m %%%%R") UTC)"
+!alias !randip !c perl -le '$,=".";print map int rand 256,1..4;' '%q'
+!alias !jarg !c cat /service/gitd/jargon/jarg.txt | XuntilY '^:%q' '^:.' | tail -r | tail -n+2 | tail -r
+!alias !jargcheck !c cat /service/gitd/jargon/jarg.txt | XuntilY '^:%q' "^:." | tail -r | tail -n+2 | tail -r | wc -l
+!alias !topic !rc echo 'TOPIC %f :%q (set by %n at '"$(date -u "+%%b %%m %%R") UTC)"
 !alias !pty !sh python -c 'import pty;pty.spawn("/usr/pkg/bin/bash")'
-!alias !you !rc if [ "%%s" = "there" ] || [ "%%s" = "there?" ]; then printf "PRIVMSG %%f :\x01ACTION is totally here\x01\n"; else echo "PRIVMSG %%f :no, you %%s" | tr '?' '!'; fi
 !alias !escape_sequences !c grep "//here" /root/services/segfault/segfault.c
-!alias !irc !eval %~/scripts/ircrawcommand %%s
-!alias !ic !eval %~/scripts/irccommand %%s
+!alias !irc !eval %~/scripts/ircrawcommand %s
+!alias !ic !eval %~/scripts/irccommand %s
 !alias !reeval !eval %~/files/useraliases
 
 ######### the todo shit #########
-!alias !addtodo !leetappend /var/todo/%%n.txt 10 "%%s"
-!alias !todo.add !addtodo %%s
-
-!alias !todo !c cat -n /var/todo/%%n.txt | shuffle -f-| head -n1
-!alias !todo. !todo %%s
-
-!alias !diddo !c rmln %%s /var/todo/%%n.txt
-!alias !todo.rm !diddo %%s
-!alias !tododel !diddo %%s
-
-!alias !todos !c cat -n /var/todo/%%n.txt
-!alias !todo.list !todos
-
-!alias !ntodo !c wc -l /var/todo/%%n.txt
-!alias !todocount !ntodo
-!alias !todo.length !ntodo
-
-!alias !greptodo !c cat -n /var/todo/%%n.txt | grep -i "%s"
-!alias !todogrep !greptodo %%s
-!alias !todo.grep !greptodo %%s
-
-!alias !todo.claim !c ln /var/todo/%%s.txt /var/todo/%%n.txt 
+!alias !todo !c cat -n '/var/todo/%n.txt' | shuffle -f-| head -n1
+!alias !todo.add !leetappend '/var/todo/%n.txt' 10 '%q'
+!alias !todo.claim !c ln '/var/todo/%q.txt' '/var/todo/%n.txt'
+!alias !todo.get !c head -n '%q' '/var/todo/%n.txt' | tail -n1
+!alias !todo.grep !c cat -n '/var/todo/%n.txt' | grep -i '%q'
+!alias !todo.gopher !c echo "gopher://$(rdns "$(hop0 "%h")")/1/todo/"'%n'".txt"
+!alias !todo.link !say http://hacking.allowed.org/todo/%n.txt
+!alias !todo.list !c cat -n '/var/todo/%n.txt'
+!alias !todo.length !c wc -l '/var/todo/%n.txt'
+ There's a real tab right....  v-- there.
+!alias !todo.n !todo.grep ^ *%s	
+!alias !todo.rm !c rmln '%q' '/var/todo/%n.txt'
+!alias !todo.who !c ls -i /var/todo | sort | clump
 ########## the end of that shit #########
 
-!alias !tmplink !c echo '<meta http-equiv="refresh" content="0;url=%%s">' > /var/www/sites/hacking/tmplink.html
-!alias !links !c if [ "%%s" ];then grep -i "%%s" /var/www/sites/hacking/links.txt;else echo http://$(rdns $(hop0 %%h))/cgi-bin/links.cgi;fi
-!alias !rmuseralias !c rmln %%s %~/files/useraliases
-!alias !useraliases !c cat -n %%~/files/useraliases %%s
-!alias !duplicateuseraliases !c cut '-d ' -f2 %%~/files/useraliases | uniq -d
-!alias !grepuseraliases !useraliases | grep %%s
+########## the useraliases shit #########
+!alias !rmuseralias !c rmln '%q' %~/files/useraliases
+!alias !useraliases !c cat -n %~/files/useraliases
+!alias !duplicateuseraliases !c cut '-d ' -f2 %~/files/useraliases | uniq -d
+!alias !grepuseraliases !c cat -n %~/files/useraliases | grep '%q'
+!alias !useralias.rm !c rmln '%q' %~/files/useraliases
+!alias !useralias.list !c cat -n %~/files/useraliases
+!alias !useralias.dups !c cut '-d ' -f2 %~/files/useraliases | uniq -d
+!alias !useralias.grep !c cat -n %~/files/useraliases | grep '%q'
+########## the end of taht shit #########
+
+!alias !tmplink !c echo '<meta http-equiv="refresh" content="0;url='$(echo '%q' | encode_html_entities)'">' > /var/www/sites/hacking/tmplink.html
+!alias !links !c if [ '_%q' != '_' ];then grep -i '%q' /var/www/sites/hacking/links.txt;else echo http://"$(rdns "$(hop0 '%h')")"/cgi-bin/links.cgi;fi
 !alias !tits !say [  . | .  ]
-!alias !geo !c whob %%s | egrep "^Country:|^City"
-!alias !dcc !rc p=$[45000 + ($RANDOM % 20000)];echo -e "privmsg %%n :\x01DCC SEND $(basename %%s) $(dcchelper $(gethostbyname %%h)) $p `wc -c "%%s"|tr -s ' '|cut '-d ' -f2`\x01";ncat -l -p $p < "%%s"
-!alias !title !c wget --no-check-certificate -qO- "%%s" | tr '>' '\n' | XuntilY "<title" "</title"| sed 's/<.*$//'
-!alias !suicide !kill 9 %%p
-!alias !pingout !kill 17 %%p
+!alias !geo !c whob '%q' | egrep "^Country:|^City"
+!alias !dcc !rc p="$[45000 + ($RANDOM % 20000)]";echo -e 'privmsg %n :\x01DCC SEND '"$(basename '%q')" "$(dcchelper $(gethostbyname %h))" "$p" "$(wc -c '%q'|tr -s ' '|cut '-d ' -f2)\x01";ncat -l -p "$p" < '%q'
+!alias !title !c wget --no-check-certificate -qO- '%q' | tr '>' '\n' | XuntilY "<title" "</title"| sed 's/<.*$//'
+!alias !suicide !kill 9 %p
+!alias !pingout !kill 17 %p
 !alias !built-ins !c grep strncmp /root/services/segfault/segfault.c | grep '"' | grep msg | tail -n+1 | cut '-d"' -f2 | tr '\n' ' ' | tr -s ' '
 !alias !help !say try: !builtins and !aliases
-!alias !cinit !leettail 56%%~/files/cmd_out
-!alias !cat !leettail 28%%s
+!alias !cinit !leettail 56%~/files/cmd_out
+!alias !cat !leettail 28%s
 !alias !^C !c 
-!alias !pid !say %%p
+!alias !pid !say %p
 !alias !cloudflare !say cloudflare == cloudlog || cloudsniff || cloudinject
 !alias !twit !c TTYtter -keyf=/home/segfault/.ttytterkey
 !alias !fact _
@@ -73,53 +68,47 @@
 !alias !fact _
 !alias !fact-set _
 !alias !fact-update _
-!alias !help1 !say %%%%host %%h %%%%user %%u %%%%from %%f %%%%nick %%n
-!alias !addtarget !leetappend /home/segfault/files/targets 10 %%s
+!alias !help1 !say %%host %h %%user %u %%from %f %%nick %n
+!alias !addtarget !leetappend /home/segfault/files/targets 10 %s
 !alias !seen !say .seen %s
-!alias !modehelp !c grep "^  %s" /usr/local/src/ngircd-21.1/doc/Modes.txt
+!alias !modehelp !c grep '^  %q' /usr/local/src/ngircd-21.1/doc/Modes.txt
 !alias !F !pymath (%s)*(9.0/5.0)+32
 !alias !C !pymath (%s-32)*(5.0/9.0)
-!alias !todo.link !say http://hacking.allowed.org/todo/%n.txt
 !alias !howtome !c hop0 %h
-!alias !twit !leetappend /home/segfault/files/twit_in 10 %%s
-!alias !perl !c perl -e '%%s'
-!alias !twit.follow !leetappend /home/segfault/files/twit_in 10 /follow %%s
+!alias !twit !leetappend /home/segfault/files/twit_in 10 %s
+!alias !perl !c perl -e '%q'
+!alias !twit.follow !leetappend /home/segfault/files/twit_in 10 /follow %s
 !alias !hardreset !eval /home/segfault/scripts/hardreset
-!alias !C2F !pymath %%s * 9 / 5 + 32
-!alias !F2C !pymath (%%s - 32) * 5 / 9
+!alias !C2F !pymath %s * 9 / 5 + 32
+!alias !F2C !pymath (%s - 32) * 5 / 9
 !alias !unbantor !c /home/mkz/ban_tor nevermind
 !alias !bantor !c /home/mkz/ban_tor I am sure
-!alias !subseg !eval /home/segfault/scripts/subseg %%s
-!alias !isup !c wget -q 'http://www.downforeveryoneorjustme.com/%s' -O- | grep "just you" | cut '-d<' -f1
-!alias !todo.who !c ls -i /var/todo | sort | /home/epoch/list_todo
-!alias !todo.gopher !c echo "gopher://$(rdns $(hop0 %h))/1/todo/%n.txt"
-!alias !r !leetappend /service/segfault-link/a/files/log 10 %%s
-!alias !untail !leetuntail %%f %%s
-!alias !tpb !c tpb.sh %%s
+!alias !subseg !eval /home/segfault/scripts/subseg %s
+!alias !isup !c wget -q 'http://www.downforeveryoneorjustme.com/%q' -O- | grep "just you" | cut '-d<' -f1
+!alias !r !leetappend /service/segfault-link/a/files/log 10 %s
+!alias !untail !leetuntail %f %s
+!alias !tpb !c tpb.sh '%q'
 !alias !randip !c whob $(dig -p 5353 whotoscan +short) | egrep "^IP:|^Country:"
-!alias !ipgamescore !c cat /var/www/sites/hacking/iplog.txt |sort | uniq | grep -c ' user=%%s$'
+!alias !ipgamescore !c cat /var/www/sites/hacking/iplog.txt |sort | uniq | grep -c ' user=%q$'
 !alias !quit !hardreset
 !alias !stop !hardreset
-!alias !wtf !c /usr/games/wtf %%s
-!alias !stealnick !ec printf '!raw kill %%s :my nick\n!nick %%s\n'
-!alias !killme !raw kill %%n :%%s
-!alias !demorse !c echo '%%s' | /usr/games/morse -d
-!alias !enmorse !c /usr/games/morse -s '%%s' | tr '\n' ' '
-!alias !sayp !c lua /home/segfault/scripts/cowsay.lua %%s
-!alias !fuckme !raw kick %%f %%n :fuck you
-!alias !todo.n !todo.grep ^ *%%s`printf "\t"`
-!alias !areacode !c grep '^%%s' /usr/local/share/misc/areacodes || echo nothing found
+!alias !wtf !c /usr/games/wtf '%q'
+!alias !stealnick !ec printf '!raw kill %q :my nick\n!nick %q\n'
+!alias !killme !raw kill %n :%s
+!alias !demorse !c echo '%q' | /usr/games/morse -d
+!alias !enmorse !c /usr/games/morse -s '%q' | tr '\n' ' '
+!alias !sayp !c lua /home/segfault/scripts/cowsay.lua '%q'
+!alias !fuckme !raw kick %f %n :fuck you
+!alias !areacode !c grep '^%q' /usr/local/share/misc/areacodes || echo nothing found
 !alias !myip !c wget -qO- http://blackcatz.org/ip
-!alias !tailpipe 24%%s
-!alias !fuck !raw kill %%n :no. you can fuck %%s
+!alias !tailpipe 24%s
+!alias !fuck !raw kill %n :no. you can fuck %s
 !alias !op !raw kill %n :what are you? dumb? did you not see that +o I gave you when you joined!?!?
-!alias !finger !c finger %%s
-!alias !dig !dig +short %%s
-!alias !dig !c dig +short %%s
-!alias !link.add !addlink %%s
-!alias !draw !c echo %%s | turn2line | lineplot | grep "[^ ]"
-!alias !todo.get !c head -n %%s /var/todo/%%n.txt | tail -n1
+!alias !finger !c finger '%q'
+!alias !dig !c dig +short '%q'
+!alias !draw !c echo '%q' | turn2line | lineplot | grep "[^ ]"
 !alias !polls !c head -n1 /var/polls/*/question
-!alias !poll !c cat /var/polls/%%s/question
-!alias !results !c cat /var/polls/%%s/votes | awk -F: '{print $2, $1}' | clump
-!alias !vote !c /var/polls/vote %%n %%s
+!alias !poll !c cat '/var/polls/%q/question'
+!alias !results !c cat '/var/polls/%q/votes' | awk -F: '{print $2, $1}' | clump
+!alias !vote !c /var/polls/vote '%n' '%q'
+!alias !link.add !addlink '%q'
