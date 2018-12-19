@@ -1,12 +1,12 @@
  Set important server message handlers first.
  004 is where we know we're connected and can start joining shit.
-!alias !eval !leettail 150%s
-!alias !004 !eval %~/scripts/startup
+!alias !Eval !leettail 022%s
+!alias !004 !Eval %~/scripts/startup
  436 is nick collision.
-!alias !433 !nick %m%r%r%r
-!alias !436 !nick %m%r%r%r
+!alias !433 !nick %m%r
+!alias !436 !nick %m%r
 !nick SegFault
 !raw user epoch epoch epoch :epoch
-
- !raw PASS wrongpassword
- !raw SERVER nope.segfault.allowed.org :testing
+!alias !Evalhome !leettail 022%~/%s
+!linelimit a
+!Evalhome files/useraliases

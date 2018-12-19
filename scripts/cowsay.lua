@@ -50,6 +50,27 @@ end
 function ascii_pc( pccmd )
 end
 
+function ascii_dickbutt( name )
+	local s = ""
+	if name == nul then name = "" else
+	name = "("..name..")\n" end
+	s = s .. [[
+ ___
+/   \ <--- ]] .. name .. [[
+|o o|
+| > |
+|__/|  /\
+|   |_ ||
+|  |  \||
+|  J   )_)
+ \____/
+   |
+  ='
+]]
+	return s
+end
+
+v="help"
 for k,v in ipairs(arg) do
 	if v == "nerd" then
 		print( ascii_nerd( arg[k+1] ) )
@@ -57,5 +78,10 @@ for k,v in ipairs(arg) do
 		print( ascii_goat( arg[k+1] ) )
 	elseif v == "shoot" then
 		print( ascii_shoot( arg[k+1] ) )
+	elseif v == "dickbutt" then
+		print( ascii_dickbutt( arg[k+1] ) )
 	end
 end
+--if v == "help" then
+--	print("usage: sayp [nerd|goat|shoot|dickbutt] [name]")
+--end

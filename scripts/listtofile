@@ -1,0 +1,4 @@
+!alias !323 !alias !332 _
+!alias !332 !leetappend /tmp/channels 10 %s
+!c > /tmp/channels
+!raw LIST

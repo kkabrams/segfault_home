@@ -1,0 +1,5 @@
+#!/bin/sh
+if [ ! -d /var/cache/segfault/xchg/$1 ];then
+  /home/segfault/bin/xchg.init $1
+fi
+grep -H . /var/cache/segfault/xchg/$1/* | grep -v ':0$' | cut -d/ -f6-

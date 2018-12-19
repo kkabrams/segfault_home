@@ -1,23 +1,24 @@
 !linelimit 10000
 !raw oper g0d WAFFLEIRON
+lambda !raw mode %m +F
 !raw join #cmd
-!alias !eval !leettail 150%%s
-!alias !rc !eval %~/scripts/rawcommand %%s
-!alias !ec !eval %~/scripts/evalcommand %%s
-!alias !c !eval %~/scripts/command %%s
-!alias !sh !eval %~/scripts/shell %%s
-!leettail 56#cmd:%~/files/cmd_out
-!leettail 56#cmd:%~/files/sh_out
+!alias !eval !leettail 150%s
+!alias !rc !eval %~/scripts/rawcommand %s
+!alias !ec !eval %~/scripts/evalcommand %s
+!alias !c !eval /home/segfault/scripts/command %s
+!alias !sh !eval %~/scripts/shell %s
+!alias !pipetailhome !leettail 56#default:%~/%s
+!alias !pipetailhome2 !leettail 56#cmd:%~/%s
+!alias !tail !leettail 08%s
+!alias !tailhome !tail #default:%~/%s
+#!tail files/cmd_out
+#!tail files/sh_out
+!pipetailhome files/cmd_out
+!pipetailhome files/sh_out
+!pipetailhome files/default
+!leettail 56#cmd:/home/segfault/files/PMepoch
+!changetail /home/segfault/files/PMepoch epoch 56
+!leettail 18#default:/home/segfault/files/eval
+!pipetailhome2 files/cmd
 !raw join #default
-
-!alias !tail !leettail 08%%s
-
-#top one joins too.
- !alias !taildir !ec find %%s -type f | while read i;do c='#'$(basename  $(dirname "$i"))'-'$(basename "$i");echo '!leettail 08'${c}':'"$i";echo '!raw JOIN '$c;echo '!raw TOPIC '$c' :'$c;done
- !alias !taildir !ec find %%s -type f | while read i;do c='#'$(basename  $(dirname "$i"))'-'$(basename "$i");echo '!leettail 08'${c}':'"$i";echo '!raw TOPIC '$c' :'$c;done
-#!alias !taildir !c find %%s -type f | while read i;do c='#'$(basename  $(dirname "$i"))'-'$(basename "$i");echo '!leettail 08'${c}':'"$i";echo '!raw TOPIC '$c' :'$c;done > /service/log2irc/scripts/taildir;echo '!lobotomy' >> /service/log2irc/scripts/taildir
-!alias !taildir !c find %%s -type f | while read i;do c='#'$(basename  $(dirname "$i"))'-'$(basename "$i");echo '!leettail 08'${c}':'"$i";echo '!raw TOPIC '$c' :'$c;done > /service/log2irc/scripts/taildir
-!taildir /var/log/toirc/
-!tail #default:%~/files/default
-
-!eval %~/files/useraliases
+!raw join #xchg

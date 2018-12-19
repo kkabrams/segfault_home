@@ -1,0 +1,4 @@
+#!/bin/sh
+rm -r /var/cache/segfault/xchg/$1 2>/dev/null
+mkdir -p /var/cache/segfault/xchg/$1
+echo 1000 > /var/cache/segfault/xchg/$1/BTC

@@ -1,0 +1,3 @@
+#!/bin/sh
+#cat /home/segfault/bin/rates
+wget -qO- https://blockchain.info/ticker

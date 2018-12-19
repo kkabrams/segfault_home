@@ -1,6 +1,6 @@
 !alias !savealias !leetappend %~/files/useraliases 10 !alias %s
 !alias !reload !raw quit :reload
-!alias !addlink !leetappend /var/www/sites/hacking/links.txt 10 %s (~%n)
+!alias !addlink !leetappend /var/www/sites/hacking/links.txt 10 %s (~%n @ %t)
 !alias !more !tailunlock %~/files/cmd_out
 !alias !shmore !tailunlock %~/files/sh_out
 !alias !ping !say pong
@@ -20,8 +20,8 @@
 !alias !reeval !eval %~/files/useraliases
 
 ######### the todo shit #########
-!alias !todo !c cat -n '/var/todo/%n.txt' | shuffle -f-| head -n1
-!alias !todo.add !leetappend '/var/todo/%n.txt' 10 '%q'
+!alias !todo !c cat -n '/var/todo/%n.txt' | grep '%q' | shuffle -f-| head -n1 | tee '/var/todo/%n.current'
+!alias !todo.add !leetappend /var/todo/%n.txt 10 "%s"
 !alias !todo.claim !c ln '/var/todo/%q.txt' '/var/todo/%n.txt'
 !alias !todo.get !c head -n '%q' '/var/todo/%n.txt' | tail -n1
 !alias !todo.grep !c cat -n '/var/todo/%n.txt' | grep -i '%q'
@@ -32,7 +32,10 @@
  There's a real tab right....  v-- there.
 !alias !todo.n !todo.grep ^ *%s	
 !alias !todo.rm !c rmln '%q' '/var/todo/%n.txt'
-!alias !todo.who !c ls -i /var/todo | sort | clump
+!alias !todo.who !c ls -i /var/todo | grep -v '\.current$' | sort | clump
+!alias !todo.current !cat /var/todo/%n.current
+!alias !todo.last !c nl '/var/todo/%n.txt' | tail -n1
+!alias !todo.page !page todo&user=%n
 ########## the end of that shit #########
 
 ########## the useraliases shit #########
@@ -47,11 +50,11 @@
 ########## the end of taht shit #########
 
 !alias !tmplink !c echo '<meta http-equiv="refresh" content="0;url='$(echo '%q' | encode_html_entities)'">' > /var/www/sites/hacking/tmplink.html
-!alias !links !c if [ '_%q' != '_' ];then grep -i '%q' /var/www/sites/hacking/links.txt;else echo http://"$(rdns "$(hop0 '%h')")"/cgi-bin/links.cgi;fi
+!alias !links !c if [ '_%q' != '_' ];then grep -i '%q' /var/www/sites/hacking/links.txt | sed 's/^/</g;s/ /> /';else echo http://"$(rdns "$(hop0 '%h')")"/cgi-bin/links.cgi;fi
 !alias !tits !say [  . | .  ]
 !alias !geo !c whob '%q' | egrep "^Country:|^City"
 !alias !dcc !rc p="$[45000 + ($RANDOM % 20000)]";echo -e 'privmsg %n :\x01DCC SEND '"$(basename '%q')" "$(dcchelper $(gethostbyname %h))" "$p" "$(wc -c '%q'|tr -s ' '|cut '-d ' -f2)\x01";ncat -l -p "$p" < '%q'
-!alias !title !c wget --no-check-certificate -qO- '%q' | tr '>' '\n' | XuntilY "<title" "</title"| sed 's/<.*$//'
+!alias !title !c title.sh '%q'
 !alias !suicide !kill 9 %p
 !alias !pingout !kill 17 %p
 !alias !built-ins !c grep strncmp /root/services/segfault/segfault.c | grep '"' | grep msg | tail -n+1 | cut '-d"' -f2 | tr '\n' ' ' | tr -s ' '
@@ -62,12 +65,6 @@
 !alias !pid !say %p
 !alias !cloudflare !say cloudflare == cloudlog || cloudsniff || cloudinject
 !alias !twit !c TTYtter -keyf=/home/segfault/.ttytterkey
-!alias !fact _
-!alias !fact-set _
-!alias !fact-update _
-!alias !fact _
-!alias !fact-set _
-!alias !fact-update _
 !alias !help1 !say %%host %h %%user %u %%from %f %%nick %n
 !alias !addtarget !leetappend /home/segfault/files/targets 10 %s
 !alias !seen !say .seen %s
@@ -88,7 +85,6 @@
 !alias !r !leetappend /service/segfault-link/a/files/log 10 %s
 !alias !untail !leetuntail %f %s
 !alias !tpb !c tpb.sh '%q'
-!alias !randip !c whob $(dig -p 5353 whotoscan +short) | egrep "^IP:|^Country:"
 !alias !ipgamescore !c cat /var/www/sites/hacking/iplog.txt |sort | uniq | grep -c ' user=%q$'
 !alias !quit !hardreset
 !alias !stop !hardreset
@@ -97,13 +93,10 @@
 !alias !killme !raw kill %n :%s
 !alias !demorse !c echo '%q' | /usr/games/morse -d
 !alias !enmorse !c /usr/games/morse -s '%q' | tr '\n' ' '
-!alias !sayp !c lua /home/segfault/scripts/cowsay.lua '%q'
-!alias !fuckme !raw kick %f %n :fuck you
+!alias !sayp !c lua /home/segfault/scripts/cowsay.lua %q
 !alias !areacode !c grep '^%q' /usr/local/share/misc/areacodes || echo nothing found
-!alias !myip !c wget -qO- http://blackcatz.org/ip
 !alias !tailpipe 24%s
 !alias !fuck !raw kill %n :no. you can fuck %s
-!alias !op !raw kill %n :what are you? dumb? did you not see that +o I gave you when you joined!?!?
 !alias !finger !c finger '%q'
 !alias !dig !c dig +short '%q'
 !alias !draw !c echo '%q' | turn2line | lineplot | grep "[^ ]"
@@ -112,3 +105,164 @@
 !alias !results !c cat '/var/polls/%q/votes' | awk -F: '{print $2, $1}' | clump
 !alias !vote !c /var/polls/vote '%n' '%q'
 !alias !link.add !addlink '%q'
+!alias !google !c printf "GET /search?q=$(printf '%q' | vis -h | sed 's/%%20/+/g')\r\nHost: www.google.com\r\n\r\n" | ncat -4 --ssl www.google.com 443 | tail -n+17 | tr '<' '\n' | grep "^a href=" | grep 'url?q=' | cut '-d"' -f2 | cut '-d?' -f2 | cut '-d&' -f1 | cut -d= -f2- | decode_html_entities | unvis -h
+!alias !imfeelinglucky !c printf "GET /search?q=$(printf '%q' | vis -h | sed 's/%%20/+/g')\r\nHost: www.google.com\r\n\r\n" | ncat -4 --ssl www.google.com 443 | tail -n+17 | tr '<' '\n' | grep "^a href=" | grep 'url?q=' | cut '-d"' -f2 | cut '-d?' -f2 | cut '-d&' -f1 | cut -d= -f2- | decode_html_entities | head -n1 | unvis -h
+!alias !link !c shuffle -f /var/www/sites/hacking/links.txt | head -n1
+!alias !mibbit !c ipconvert $(echo $[0x%q] ) | grep quad
+!alias !VERSION !rc printf "NOTICE %n :\x01VERSION SegFault:bleedy:unix\x01\n"
+!alias !TIME !rc printf "NOTICE %n :\x01TIME :%%s\x01\n" "$(date)"
+!alias !DCC !lambda !%s
+!alias !dunno !c printf '_     _\n \\O_o/\n'
+!alias !title !c wget --no-check-certificate -qO- '%q' | tr '>' '\n' | XuntilY "<title" "</title"| sed 's/<.*$//' | grep '[^ \t]' | decode_html_entities
+!alias !upc !c wget -qO- http://www.upcdatabase.com/item/$(echo '%q' | tr -cd '0123456789') | grep Description | cut -d\> -f7 | cut -d\< -f1
+!alias !you !c /home/segfault/chat/chat.sh you '%q'
+!alias !cccode !c grep '^%q' /usr/local/share/misc/countrycallcodes
+!alias !whatis !c whatis '%q'
+!alias !links.dicks !c sed 's/.*(~//' /var/www/sites/hacking/links.txt | sort | uniq -c
+!alias !coffee !say I'm not your fuckin' slave! I don't even have hands!
+!alias !btc-usd !c wget -qO- https://blockchain.info/ticker | jq '.USD["last"]'
+!alias !page !say http://hacking.allowed.org/cgi-bin/pageview.cgi?page=%s
+!alias !ohshit !linelimit 1
+!alias !dnsflush !c /home/segfault/programs/dnsflush
+!alias !kitteh !cat /anarchy/ascii-art/kitteh
+!alias !ssyahoo !c wget -qO- "http://ff.search.yahoo.com/gossip?output=fxjson&command=$(printf '%%s' '%q' | vis -h)" | jq .[1][0]
+!alias !319 !c printf '%%s' '%q' | cut -d: -f3- | tr ' ' '\n' | sort > /home/segfault/tmp/channels_%3
+!alias !chandiff !c diff /home/segfault/tmp/channels_{%0,%1} | grep '^[<>]' | sort
+!alias !unshorten !c unshorten.sh '%q'
+!alias !chandunno !rc printf "PRIVMSG %s :_     _\nPRIVMSG %s : \\O_o/\n"
+!alias !DATE !rc printf 'notice %f :\x01DATE %%s\x01\n' "$(date)"
+!alias !title_noua !c wget --user-agent="" -qO- '%q' | tr '>' '\n' | XuntilY "<title" "</title" | sed 's/<.*$//' | grep '[^ \t]' | decode_html_entities
+!alias !hextohost !c gethostbyname $(runlib libc.so htonl i$(echo $[0x%s]) . libc.so printf s'%%i' r0)
+!alias !tell !say try: @tell
+!alias !tell !say try @tell
+!alias !dec2hex !c printf "%%x\n" '%q'
+!alias !me !say ACTION %s
+!alias !ted !c /home/epoch/projects/markov/markov.sh %s | sed 's/ \([.!?]\)$/\1/'
+!alias \o !say o/
+!alias o/ !say \o
+!alias !date !c TZ=%s date
+!alias dunno !dunno
+!alias !yesno !c (exit $[$RANDOM %% 2]) && echo yes || echo no
+!alias should !yesno
+!alias !urbdict !c urbdict.sh '%q'
+!alias !quote !raw %s
+!alias !page !c echo 'http://'"$(rdns "$(hop0 "%h")")"'/cgi-bin/pageview.cgi?page=%q'
+!alias !ctcpme !raw privmsg %n :%A%s%A
+!alias !ctcpthem !raw privmsg %0 :%A%1%A
+!alias ;TIME !raw privmsg #defualt :%s
+!alias ;VERSION !raw privmsg #defualt :%s
+!alias ;VERSION !raw privmsg #default :%s
+!alias ;TIME !raw privmsg #default :%s
+!alias !xory !c (exit $[$RANDOM %% 2]) && echo '%0' || echo '%2'
+!alias !readtwit !c wget -qO- '%q' | tr '<' '\n' | XuntilY '^div class="js-tweet-text-container"' '/div' | sed "s/^[^>]*>//g" | tr -d '\n' | decode_html_entities
+!alias !readtwit2 !c wget -qO- '%q' | tr '<' '\n' | awk '/^div class="js-tweet-text-container"/,/\/div/' | sed "s/^[^>]*>//g" | tr -d '\n' | decode_html_entities
+!alias !checkcerts !c printf 'QUIT :derp\r\n' | openssl s_client -connect %s 2>&1 | openssl x509 -noout -subject -dates
+!alias !ptythis !sh python -c 'import pty;pty.spawn("'%s'")'
+!alias Who !say your mother.
+!alias who !say your mother.
+!alias !addnote !leetappend /var/www/sites/hacking/docs/writing/%n_notes.txt 10 %s
+!alias \o/ !say Well fuck you mate
+!alias !msg !c printf '%%s' "$(printf '%%s' '%q' | cut '-d ' -f2-)" > /anarchy/msg/"$(printf '%%s' '%q' | cut '-d ' -f1)"
+!alias ;SEND !c ncat -i 10 $(gethostbyname %1) %2 > /anarchy/segfault_dccin/%0
+!alias ;DCC lambda %s
+!alias !spam !rc for i in $(seq 1 1000);do echo -e "nick Derp$i\nprivmsg %q :YOU GOT FUCKED SON";done
+!alias s !c cat /home/segfault/files/log | tac | tail -n+5 | sed -n 's/%sp' | head -n1
+!alias !quest.rm !c rmln '%q' '/var/todo/quests.txt'
+!alias !quest.add !leetappend /var/todo/quests.txt 10 "%s" (~%n)
+!alias !quest !c cat -n '/var/todo/quests.txt' | shuffle -f- | head -n1 | tee '/var/todo/%n.current'
+!alias which !c printf '%%s\n' '%q' | grep ': ' | cut -d: -f2- | sed "s/, or /,/g" | tr -d '?' | tr ',' '\n' | grep . | shuffle -f- | head -n1 | sed 's/^ *//g;s/ *$//g'
+!alias !fight !raw kill %n :no fighting
+!alias ;KICK !raw kill %n :weapons escalation!
+!alias $toke !say whoops wrong channel xD
+!alias !source !say git://armitage.hacking.allowed.org/segfault
+!alias !sauce !source
+!alias ping? !say pong?
+!alias ping. !say pong.
+!alias ping !say pong
+!alias which: which : %s
+!alias !listenbitch! !say it wasn't Obama's fault
+!alias !Weather !c curl -s -q -4 'http://wttr.in/%q' | head -n 7
+!alias !synop !c man -h '%q' 2>&- | perl -pe 's/.\x08//g'
+!alias !topn !c top | head -n $[7+%0] | tail -n$[%0+1]
+!alias !coffee !say o/
+!alias !btc-balance !c wget -qO- https://blockchain.info/q/addressbalance/%s
+!alias !btc-balance !ec echo '!satoshi2btc' "$(wget -qO- https://blockchain.info/q/addressbalance/%s)"
+!alias !satoshi2btc !c printf '%%d.%%08d\n' "$(echo '%s' | rev | cut -b9- | rev)" "$(echo '%s' | rev | cut -b-8 | rev)"
+!alias !localtime !date epoch
+!alias !reddit !c curl -sA "Mozilla Firefux" 'https://www.reddit.com/r/%q/.rss' | tr '<' '\n' | XuntilY '^entry' '^/entry' 999 | XuntilY '^title' '^/title' 999 | tr '>' '\n' | grep -v '^title' | grep -v '^/title' | grep . | head -n 5 | decode_html_entities
+!alias !magic-check lambda !say %%%%%0 = %%%s
+!alias !python !c python -c '%q'
+!alias !ted !c cd /home/epoch/projects/markov ; ./markov.sh
+!alias !ted !c cd /home/epoch/projects/markov ; ./markov.sh | tac | tac
+!alias !bots !me is a bot
+!alias !cycle !rc printf 'PART %f\nJOIN %f'
+!alias are !yesno
+!alias is !yesno
+!alias right? !xory right! or wrong!
+ !alias sup? !c wget -qO- http://news.ycombinator.com/rss | xml sel -t -v '//item/title|//item/link' | head -n2
+!alias !nowplaying !c wget -qO- http://radio.zempirians.com/current.php
+!alias !dnsamp !c dig -t ANY '%q' | tail -n2 | cut -d: -f2-
+!alias !dnsamp !c dig -t ANY '%q' | tail -n2 | cut -d: -f2- ; printf "%%s\n" '%q'
+!alias !epochplaying !c cat /proc/$(pgrep mpg123)/cmdline | tr '\0' '\t' | cut -f2
+!alias orly? ORLY.
+ !alias ;QUIT !rc if [ '%q' = 'QUIT Ping timeout: 120 seconds' ];then echo "kline *!%u@%h 3600 :autoban for pingout. use other server or wait an hour.";else echo "PRIVMSG #default :*!%u@%h" for '%q';fi
+!alias can !yesno
+!alias how? !say fuck if I know. I'm just a bot.
+!alias could !yesno
+!alias !rr !rc mkdir -p /tmp/rr;cd /tmp/rr ; cat <(seq 1 6) <(ls /tmp/rr) | sort | uniq -u | shuffle -f- | head -n1 | tee /dev/stderr | xargs touch ; if [ -e /tmp/rr/6 ] ;then echo 'kill %n :you just painted the walls with your brains'; rm /tmp/rr/* ; else echo 'privmsg %f :wew' ; fi
+!alias !lastdaysincelifedamngood !say 0
+!alias !howmanyfucks !say 0
+!alias howmany which : all, none, few, many, some?
+!alias how !leetappend /home/segfault/files/eval 10 how%s
+!alias !dicksize !c dicksize '%q'
+!alias s !c cat /home/segfault/files/log | tac | tail -n+2 | sed -n 's/%sp' | head -n1
+!alias Should !yesno
+!alias does !yesno
+!alias do !yesno
+!alias orly? !yesno
+!alias !myip !c dig +short ns2.allowed.org @ns1.afraid.org
+!alias !temp !c envstat | tail -n1 | tr -s ' ' | cut '-d ' -f4 | cut -d. -f1
+!alias echo $RANDOM
+!alias !quest.grep !c grep -ni '%q' '/var/todo/quests.txt'
+!alias what? !rc atrm $(atq | tail -n1 | tr -s ' ' | cut '-d ' -f5);echo 'echo '\''!raw kill %n :what?'\'' > /home/segfault/files/eval' | at +5minutes ; echo 'PRIVMSG %f :you have 5 minutes to get rid of that word.'
+!alias !chain !leetappend /home/segfault/files/eval 10 %s
+!alias keep_talking_shit !say is that a command?
+!alias brb !c date +%%s > '/var/cache/segfault/brb/%n';echo "I will count the seconds until your return."
+!alias back !c if [ -f '/var/cache/segfault/brb/%n' ];then echo "you were gone for" $[$(date +%%s) - $(cat '/var/cache/segfault/brb/%n')] "seconds";rm '/var/cache/segfault/brb/%n';fi
+!alias i_love_SegFault !say <3
+!alias i_love !chain i_love_%s
+!alias i !chain i_%s
+!alias was !yesno
+!alias hack_the_planet !c cat /anarchy/ascii-art/epoch/hands/fist ; echo 'HACK THE PLANET!'
+!alias !whogone !c cd /var/cache/segfault/brb/; echo *
+
+!alias $init !c /home/segfault/bin/xchg.init %n
+!alias $list !c /home/segfault/bin/xchg.list %n
+!alias $buy !c /home/segfault/bin/xchg.buy %n %s
+!alias $sell $buy -%s
+!alias $getprice !c wget -qO- 'https://min-api.cryptocompare.com/data/price?fsym=%0&tsyms=%1' | jq '.["%1"]' | xargs printf "1 %0 is worth %%s %1"
+
+!alias keep_talking !chain keep_talking_%s
+!alias keep !chain keep_%s
+!alias hack !chain hack_%s
+!alias hack_the !chain hack_the_%s
+!alias did !yesno
+!alias have !yesno
+!alias beep !say boop
+!alias boop !say beep
+!alias !btc-usd !c curl -s https://blockchain.info/ticker | jq '.USD["last"]'
+!alias !ted !c cd /home/epoch/projects/markov/ ; ./markov.sh sauce | tac
+!alias !ug !c cd /home/epoch/projects/markov/ ; ./markov.sh sauce_underground | tac
+!alias !markov !c cd /home/epoch/projects/markov/ ; ./markov.sh %s | tac
+!alias hi !c printf "%s\n" '%q' | grep '%m' 2>&1 >/dev/null && echo "Hi."
+!alias what_is !c grep -A1 '^'"$(printf "%s\n" '%q' | sed 's/\?$//')"'$' /home/segfault/files/what | sed -n 'n;p' | fold -s -w 300
+!alias what !chain what_%s
+!alias know !chain know_%s
+!alias know_that !c printf '%%s\n' '%q' | sed -E 's/ is | are /\'$'\n''/' >> /home/segfault/files/what
+!alias what_are what_is %s
+!alias what's what_is %s
+!alias $help !cat /home/segfault/bin/xchg.help
+!alias $give !c /home/segfault/bin/xchg.give %n %s
+!alias $price $getprice %s
+!alias when which : soon, after a while, eventually, never, recently, while ago, long time ago
+!alias !vol !c mixerctl -w outputs.headphones%s

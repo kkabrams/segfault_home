@@ -1,0 +1,10 @@
+ $list Shows how many coin you have
+ $buy [amount] [what_you_want] [what_you_dont]
+ I think of it like: xchg, I want to buy 100 bitcoins with US dollars.
+ example: $but 100 BTC USD
+ $sell [amount] [what_you_want] [what_you_dont]
+ $give [amount] [type] [their_nick]
+ I think of this one like: xchg, I want to give 100 bitcoins to my_bro
+ example: $give 20 ETH epoch
+ amounts can also be percentages or "all" which just gets turned into 100%
+ these percentages are based on the amount of money of the type that is being spent.

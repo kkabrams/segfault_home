@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+nick=$1
+amount=$2
+type=$3
+dstnick=$4
+if [ "$nick" = "" ];then
+  echo missing argument for nick
+  exit 1
+fi
+if [ ! -d /var/cache/segfault/xchg/$nick/ ];then
+  /home/segfault/bin/xchg.init $nick
+fi
+if [ "$amount" = "" ];then
+  echo missing argument for amount
+  exit 1
+fi
+if [ "$type" = "" ];then
+  echo missing argument for type of currency
+  exit 1
+fi
+if [ "$dstnick" = "" ];then
+  echo missing argument for who is to receive the money
+  exit 1
+fi
+
+rate=1
+
+#if [ $target != BTC ];then
+#  rate2=$(/home/segfault/bin/xchg.getrate $target)
+#  if [ "$rate2" = "null" ];then
+#    echo "invalid currency type $target used"
+#    exit 1
+#  fi
+#  rate=$(echo | awk "{print $rate / $rate2}")
+#fi
+
+#if [ $source != BTC ];then
+#  rate2=$(/home/segfault/bin/xchg.getrate $source)
+#  if [ "$rate2" = "null" ];then
+#    echo "invalid currency type $source used"
+#    exit 1
+#  fi
+#  rate=$(echo | awk "{print $rate * $rate2}")
+#fi
+
+#rate=$(/home/segfault/bin/xchg.getdoublerate $source $target)
+rate=1
+
+walletsrc=$(cat /var/cache/segfault/xchg/$nick/$type 2>&-)
+walletdst=$(cat /var/cache/segfault/xchg/$dstnick/$type 2>&-)
+
+if [ "$walletsrc" = "" ];then
+  walletsrc=0
+fi
+if [ "$walletdst" = "" ];then
+  walletdst=0
+fi
+
+### if other types of ways of specifying how much are added, remember to set both srcamt and amount.
+if [ $amount = "all" ];then
+  amount="100%"
+fi
+if grep '%' <<< "$amount" 2>&1 > /dev/null;then
+  percentage="$(printf "%s\n" "$amount" | tr -cd '0-9.')"
+  srcamt="$(echo | awk "{print ($percentage / 100) * $walletsrc}")"
+  amount=$srcamt
+else
+  srcamt=$amount
+fi
+
+if [ "$srcamt" = "" ];then
+  srcamt=0
+fi
+
+echo trying to give $srcamt $type to $dstnick...
+
+
+postwalletsrc=$(echo | awk "{print $walletsrc - $srcamt}")
+
+if printf "%s\n" $postwalletsrc | grep ^- 2>&1 > /dev/null;then
+  echo you, $1, would need to have $srcamt $source to give $amount $type to $dstnick. you only have $walletsrc $source.
+  exit 1
+fi
+
+### if we got here we have enough money... guess make the purchase
+#echo updating your source wallet...
+echo $(echo | awk "{print $walletsrc - $srcamt}") > /var/cache/segfault/xchg/$nick/$type
+#echo updating your target wallet...
+echo $(echo | awk "{print $walletdst + $amount}") > /var/cache/segfault/xchg/$dstnick/$type
+echo done
