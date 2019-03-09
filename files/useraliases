@@ -165,7 +165,6 @@
 !alias !msg !c printf '%%s' "$(printf '%%s' '%q' | cut '-d ' -f2-)" > /anarchy/msg/"$(printf '%%s' '%q' | cut '-d ' -f1)"
 !alias ;SEND !c ncat -i 10 $(gethostbyname %1) %2 > /anarchy/segfault_dccin/%0
 !alias ;DCC lambda %s
-!alias !spam !rc for i in $(seq 1 1000);do echo -e "nick Derp$i\nprivmsg %q :YOU GOT FUCKED SON";done
 !alias s !c cat /home/segfault/files/log | tac | tail -n+5 | sed -n 's/%sp' | head -n1
 !alias !quest.rm !c rmln '%q' '/var/todo/quests.txt'
 !alias !quest.add !leetappend /var/todo/quests.txt 10 "%s" (~%n)
@@ -233,7 +232,6 @@
 !alias i_love !chain i_love_%s
 !alias i !chain i_%s
 !alias was !yesno
-!alias hack_the_planet !c cat /anarchy/ascii-art/epoch/hands/fist ; echo 'HACK THE PLANET!'
 !alias !whogone !c cd /var/cache/segfault/brb/; echo *
 
 !alias $init !c /home/segfault/bin/xchg.init %n
@@ -245,7 +243,6 @@
 !alias keep_talking !chain keep_talking_%s
 !alias keep !chain keep_%s
 !alias hack !chain hack_%s
-!alias hack_the !chain hack_the_%s
 !alias did !yesno
 !alias have !yesno
 !alias beep !say boop
@@ -264,5 +261,11 @@
 !alias $help !cat /home/segfault/bin/xchg.help
 !alias $give !c /home/segfault/bin/xchg.give %n %s
 !alias $price $getprice %s
-!alias when which : soon, after a while, eventually, never, recently, while ago, long time ago
+!alias when which : soon, after a while, eventually, never, recently, a while ago, long time ago
 !alias !vol !c mixerctl -w outputs.headphones%s
+!alias !todo.last !c a='%q';nl '/var/todo/%n.txt' | tail -n${a:=1}
+!alias !216 !raw gline %4
+!alias !whoami !c echo %n@%h
+!alias brb. brb
+!alias fist !c cat /anarchy/ascii-art/epoch/hands/fist; echo 'HACK THE %q' | tr 'a-z' 'A-Z'
+!alias hack_the fist %s
