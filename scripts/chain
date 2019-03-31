@@ -1,0 +1,2 @@
+!changetail %~/files/eval %f 18
+!leetappend %~/files/eval 10 %s

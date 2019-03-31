@@ -1,0 +1,16 @@
+Qmy nick
+A%n
+Qyour nick
+A%m
+Q%n
+A%%n is your nick. "%n"
+Q%m
+A%%m is my nick. "%m"
+Q%f
+A%%f is the source of the message. "%f" right now.
+Q%r
+A%%r is a random single digit integer. for example: "%r"
+Q%p
+A%%p is my PID. "%p"
+Qyour PID
+A%p
