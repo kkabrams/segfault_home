@@ -20,7 +20,7 @@
 !alias !reeval !eval %~/files/useraliases
 
 ######### the todo shit #########
-!alias !todo !c cat -n '/var/todo/%n.txt' | grep '%q' | shuffle -f-| head -n1 | tee '/var/todo/%n.current'
+!alias !todo !c cat -n '/var/todo/%n.txt' | grep '%q' | shuf | head -n1 | tee '/var/todo/%n.current'
 !alias !todo.add !leetappend /var/todo/%n.txt 10 "%s"
 !alias !todo.claim !c ln '/var/todo/%q.txt' '/var/todo/%n.txt'
 !alias !todo.get !c head -n '%q' '/var/todo/%n.txt' | tail -n1
@@ -107,7 +107,7 @@
 !alias !link.add !addlink '%q'
 !alias !google !c printf "GET /search?q=$(printf '%q' | vis -h | sed 's/%%20/+/g')\r\nHost: www.google.com\r\n\r\n" | ncat -4 --ssl www.google.com 443 | tail -n+17 | tr '<' '\n' | grep "^a href=" | grep 'url?q=' | cut '-d"' -f2 | cut '-d?' -f2 | cut '-d&' -f1 | cut -d= -f2- | decode_html_entities | unvis -h
 !alias !imfeelinglucky !c printf "GET /search?q=$(printf '%q' | vis -h | sed 's/%%20/+/g')\r\nHost: www.google.com\r\n\r\n" | ncat -4 --ssl www.google.com 443 | tail -n+17 | tr '<' '\n' | grep "^a href=" | grep 'url?q=' | cut '-d"' -f2 | cut '-d?' -f2 | cut '-d&' -f1 | cut -d= -f2- | decode_html_entities | head -n1 | unvis -h
-!alias !link !c shuffle -f /var/www/sites/hacking/links.txt | head -n1
+!alias !link !c shuf /var/www/sites/hacking/links.txt | head -n1
 !alias !mibbit !c ipconvert $(echo $[0x%q] ) | grep quad
 !alias !VERSION !rc printf "NOTICE %n :\x01VERSION SegFault:bleedy:unix\x01\n"
 !alias !TIME !rc printf "NOTICE %n :\x01TIME :%%s\x01\n" "$(date)"
@@ -168,8 +168,8 @@
 !alias s !c cat /home/segfault/files/log | tac | tail -n+5 | sed -n 's/%sp' | head -n1
 !alias !quest.rm !c rmln '%q' '/var/todo/quests.txt'
 !alias !quest.add !leetappend /var/todo/quests.txt 10 "%s" (~%n)
-!alias !quest !c cat -n '/var/todo/quests.txt' | shuffle -f- | head -n1 | tee '/var/todo/%n.current'
-!alias which !c printf '%%s\n' '%q' | grep ': ' | cut -d: -f2- | sed "s/, or /,/g" | tr -d '?' | tr ',' '\n' | grep . | shuffle -f- | head -n1 | sed 's/^ *//g;s/ *$//g'
+!alias !quest !c cat -n '/var/todo/quests.txt' | shuf | head -n1 | tee '/var/todo/%n.current'
+!alias which !c printf '%%s\n' '%q' | grep ': ' | cut -d: -f2- | sed "s/, or /,/g" | tr -d '?' | tr ',' '\n' | grep . | shuf | head -n1 | sed 's/^ *//g;s/ *$//g'
 !alias !fight !raw kill %n :no fighting
 !alias ;KICK !raw kill %n :weapons escalation!
 !alias $toke !say whoops wrong channel xD
@@ -208,7 +208,7 @@
 !alias can !yesno
 !alias how? !say fuck if I know. I'm just a bot.
 !alias could !yesno
-!alias !rr !rc mkdir -p /tmp/rr;cd /tmp/rr ; cat <(seq 1 6) <(ls /tmp/rr) | sort | uniq -u | shuffle -f- | head -n1 | tee /dev/stderr | xargs touch ; if [ -e /tmp/rr/6 ] ;then echo 'kill %n :you just painted the walls with your brains'; rm /tmp/rr/* ; else echo 'privmsg %f :wew' ; fi
+!alias !rr !rc mkdir -p /tmp/rr;cd /tmp/rr ; cat <(seq 1 6) <(ls /tmp/rr) | sort | uniq -u | shuf | head -n1 | tee /dev/stderr | xargs touch ; if [ -e /tmp/rr/6 ] ;then echo 'kill %n :you just painted the walls with your brains'; rm /tmp/rr/* ; else echo 'privmsg %f :wew' ; fi
 !alias !lastdaysincelifedamngood !say 0
 !alias !howmanyfucks !say 0
 !alias howmany which : all, none, few, many, some?
@@ -224,7 +224,6 @@
 !alias echo $RANDOM
 !alias !quest.grep !c grep -ni '%q' '/var/todo/quests.txt'
 !alias what? !rc atrm $(atq | tail -n1 | tr -s ' ' | cut '-d ' -f5);echo 'echo '\''!raw kill %n :what?'\'' > /home/segfault/files/eval' | at +5minutes ; echo 'PRIVMSG %f :you have 5 minutes to get rid of that word.'
-!alias !chain !leetappend /home/segfault/files/eval 10 %s
 !alias keep_talking_shit !say is that a command?
 !alias brb !c date +%%s > '/var/cache/segfault/brb/%n';echo "I will count the seconds until your return."
 !alias back !c if [ -f '/var/cache/segfault/brb/%n' ];then echo "you were gone for" $[$(date +%%s) - $(cat '/var/cache/segfault/brb/%n')] "seconds";rm '/var/cache/segfault/brb/%n';fi
@@ -252,10 +251,10 @@
 !alias !ug !c cd /home/epoch/projects/markov/ ; ./markov.sh sauce_underground | tac
 !alias !markov !c cd /home/epoch/projects/markov/ ; ./markov.sh %s | tac
 !alias hi !c printf "%s\n" '%q' | grep '%m' 2>&1 >/dev/null && echo "Hi."
-!alias what_is !c grep -A1 '^'"$(printf "%s\n" '%q' | sed 's/\?$//')"'$' /home/segfault/files/what | sed -n 'n;p' | fold -s -w 300
+!alias what_is !ec grep -A1 '^'"$(printf "Q%%s\n" '%q' | sed 's/\?$//')"'$' /home/segfault/files/what | sed -n 'n;p' | fold -s -w 300 | cut -b2- | tr '\n' '\0' | xargs -n1 -0 printf 'lambda !say %%s'
 !alias what !chain what_%s
 !alias know !chain know_%s
-!alias know_that !c printf '%%s\n' '%q' | sed -E 's/ is | are /\'$'\n''/' >> /home/segfault/files/what
+!alias know_that !c printf 'Q%%s\n' '%q' | sed -E 's/ is | are /\'$'\n''A/' >> /home/segfault/files/what
 !alias what_are what_is %s
 !alias what's what_is %s
 !alias $help !cat /home/segfault/bin/xchg.help
@@ -269,3 +268,5 @@
 !alias brb. brb
 !alias fist !c cat /anarchy/ascii-art/epoch/hands/fist; echo 'HACK THE %q' | tr 'a-z' 'A-Z'
 !alias hack_the fist %s
+!alias !c !leetappend /home/pi/src/segfault_home/files/cmd_in 10 %s
+!alias !chain !eval /home/segfault/scripts/chain %s
