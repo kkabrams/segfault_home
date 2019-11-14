@@ -23,6 +23,17 @@ if [ "$source" = "" ];then
   exit 1
 fi
 
+if [ $amount = "-all" ];then #we're selling all
+  amount="100%"
+  merp=$source
+  source=$target
+  target=$merp
+fi
+
+if [ $amount = "all" ];then
+  amount="100%"
+fi
+
 rate=1
 
 #if [ $target != BTC ];then
@@ -56,12 +67,9 @@ if [ "$walletdst" = "" ];then
 fi
 
 ### if other types of ways of specifying how much are added, remember to set both srcamt and amount.
-if [ $amount = "all" ];then
-  amount="100%"
-fi
 if grep '%' <<< "$amount" 2>&1 > /dev/null;then
-  percentage="$(printf "%s\n" "$amount" | tr -cd '0-9.')"
-  srcamt="$(echo | awk "{print ($percentage / 100) * $walletsrc}")"
+  percentage="$(printf "%s\n" "$amount" | tr -cd '0-9.-')"
+  srcamt="$(echo | awk "{print ( $percentage / 100) * $walletsrc}")"
   amount=$(echo | awk "{print $srcamt / $rate}")
 else
   srcamt=$(echo | awk "{print $amount * $rate}")
