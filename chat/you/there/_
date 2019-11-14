@@ -1,2 +1,0 @@
-#!/bin/sh
-printf "\x01ACTION is totally here\x01\n"
